@@ -3,7 +3,7 @@ import json
 import requests
 from django.conf import settings
 
-from .models import CrewMember, Genre, Movie, CrewMember, CastMember
+from .models import CastMember, CrewMember, Genre, Movie
 
 
 def get_movie_data(movie_id):

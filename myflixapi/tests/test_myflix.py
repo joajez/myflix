@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
-from myflixapi.models import Movie, Genre, CrewMember, CastMember
-from myflixapi.views import MovieViewSet
-from rest_framework import status
 from django.core import mail
+from django.test import TestCase
+from rest_framework import status
 from rest_framework.test import APIClient, APIRequestFactory
+
+from myflixapi.models import CastMember, CrewMember, Genre, Movie
 from myflixapi.tests.factories import GenreFactory, MovieFactory, UserFactory
+from myflixapi.views import MovieViewSet
 
 User = get_user_model()
 # Create your tests here.
@@ -104,7 +105,6 @@ class MovieTestView(TestCase):
                 "password": "defaultpassword",
             },
         )
-        print(response)
         token = response.data["access"]
 
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
@@ -113,7 +113,7 @@ class MovieTestView(TestCase):
         response = self.client.get(self.movies_url)
 
         self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(len(response.json()), 102)
+        self.assertEquals(list(response.data.items())[0][1], 102)
 
     def test_get_movie_details(self):
         response = self.client.get(
@@ -136,7 +136,7 @@ class MovieTestView(TestCase):
         response = self.client.get(f"{self.movies_url}?search=harry")
 
         self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(len(response.data), 1)
+        self.assertEquals(list(response.data.items())[0][1], 1)
 
     def test_filter_movie_by_genre(self):
         g1 = GenreFactory(title="Fantasy")
@@ -145,4 +145,4 @@ class MovieTestView(TestCase):
         response = self.client.get(f"{self.movies_url}?genres={g1.external_genre_id}")
 
         self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(len(response.data), 1)
+        self.assertEquals(list(response.data.items())[0][1], 1)

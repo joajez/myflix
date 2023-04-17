@@ -7,20 +7,28 @@ User = get_user_model()
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.pagination import PageNumberPagination
 
-from .models import CrewMember, Genre, Movie, CrewMember, CastMember
+from .models import CastMember, CrewMember, Genre, Movie
 from .serializers import (
+    CastMemberSerializer,
     CrewMemberSerializer,
     GenreSerializer,
     MovieSerializer,
-    CastMemberSerializer,
 )
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 9
+    page_size_query_param = "page_size"
+    max_page_size = 9
 
 
 # Create your views here.
 class MovieViewSet(viewsets.ModelViewSet):
-    queryset = Movie.objects.all()
+    queryset = Movie.objects.all().order_by("-release_date")
     serializer_class = MovieSerializer
+    pagination_class = StandardResultsSetPagination
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ["language", "genres"]

@@ -10,10 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import sys
 from pathlib import Path
 
 import environ
-import sys
 
 ROOT_DIR = environ.Path(__file__) - 2
 env = environ.Env()
