@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 
 import environ
+import sys
 
 ROOT_DIR = environ.Path(__file__) - 2
 env = environ.Env()
@@ -45,10 +46,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "myflixapi",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "rest_auth.registration",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "django_rest_passwordreset",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -80,10 +81,30 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "myflix.wsgi.application"
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+}
 
+# if DEBUG:
+#     EMAIL_HOST = "localhost"
+#     EMAIL_PORT = 1025
+#     EMAIL_HOST_USER = ""
+#     EMAIL_HOST_PASSWORD = ""
+#     EMAIL_USE_TLS = False
+#     DEFAULT_FROM_EMAIL = "testing@example.com"
 
+if DEBUG:
+    # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+if "test" in sys.argv or "test_coverage" in sys.argv:
+    print("TESTING")
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 DATABASES = {"default": env.db()}
 
