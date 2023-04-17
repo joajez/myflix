@@ -5,7 +5,7 @@ from myflixapi.views import MovieViewSet
 from rest_framework import status
 from django.core import mail
 from rest_framework.test import APIClient, APIRequestFactory
-from myflixapi.tests.factories import GenreFactory, MovieFactory
+from myflixapi.tests.factories import GenreFactory, MovieFactory, UserFactory
 
 User = get_user_model()
 # Create your tests here.
@@ -19,18 +19,16 @@ class UserTestView(TestCase):
         self.login_url = "/auth/login/"
         self.delete_account_url = "/auth/delete_account/"
         # todo: UserFactory
-        self.user = User.objects.create(username="testuser")
-        self.user.set_password("12345")
+        self.user = UserFactory.create()
         self.update_profile_url = f"/auth/update_profile/{self.user.id}/"
-        self.user.save()
         self.authenticate()
 
     def authenticate(self):
         response = self.client.post(
             self.login_url,
             {
-                "username": "testuser",
-                "password": "12345",
+                "username": "username",
+                "password": "defaultpassword",
             },
         )
         token = response.data["access"]
@@ -56,8 +54,8 @@ class UserTestView(TestCase):
     def test_login(self):
         # login data
         data = {
-            "username": "testuser",
-            "password": "12345",
+            "username": "username",
+            "password": "defaultpassword",
         }
         response = self.client.post(self.login_url, data)
         # check the response status and data
@@ -89,10 +87,7 @@ class MovieTestView(TestCase):
         self.client = APIClient()
         self.movies_url = "/api/movies/"
         self.login_url = "/auth/login/"
-        # todo use UserFactory
-        self.user = User.objects.create(username="testuser")
-        self.user.set_password("12345")
-        self.user.save()
+        UserFactory.create()
         self.movie_obj = Movie.objects.create(
             title="test movie", external_movie_id=12345
         )
@@ -105,10 +100,11 @@ class MovieTestView(TestCase):
         response = self.client.post(
             self.login_url,
             {
-                "username": "testuser",
-                "password": "12345",
+                "username": "username",
+                "password": "defaultpassword",
             },
         )
+        print(response)
         token = response.data["access"]
 
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")

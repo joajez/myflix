@@ -1,5 +1,8 @@
 import factory
 from myflixapi import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class GenreFactory(factory.django.DjangoModelFactory):
@@ -27,3 +30,15 @@ class MovieFactory(factory.django.DjangoModelFactory):
             # A list of groups were passed in, use them
             for genre in extracted:
                 self.genres.add(genre)
+
+
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.User
+        exclude = ("plaintext_password",)
+
+    username = "username"
+    email = factory.sequence(lambda n: "test{}@example.com".format(n))
+    plaintext_password = factory.PostGenerationMethodCall(
+        "set_password", "defaultpassword"
+    )
