@@ -19,7 +19,7 @@ class UserTestView(TestCase):
         self.register_url = "/auth/register/"
         self.login_url = "/auth/login/"
         self.delete_account_url = "/auth/delete_account/"
-        # todo: UserFactory
+        self.delete_crewmember_url = "/api/crewmembers/1/"
         self.user = UserFactory.create()
         self.update_profile_url = f"/auth/update_profile/{self.user.id}/"
         self.authenticate()
@@ -77,6 +77,11 @@ class UserTestView(TestCase):
 
         self.assertEquals(response.status_code, status.HTTP_200_OK)
         self.assertEquals(len(User.objects.filter(id=user_id)), 0)
+
+    def test_fail_delete_crew_member(self):
+        response = self.client.delete(self.delete_crewmember_url)
+
+        self.assertEquals(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 # This is a test class for testing the functionality of a MovieViewSet in a Django REST API, including

@@ -25,7 +25,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 # Create your views here.
-class MovieViewSet(viewsets.ModelViewSet):
+class MovieViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Movie.objects.all().order_by("-release_date")
     serializer_class = MovieSerializer
     pagination_class = StandardResultsSetPagination
@@ -35,13 +35,13 @@ class MovieViewSet(viewsets.ModelViewSet):
     search_fields = ["title"]
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = [IsAuthenticated]
 
 
-class CrewMemberViewSet(viewsets.ModelViewSet):
+class CrewMemberViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CrewMember.objects.all()
     serializer_class = CrewMemberSerializer
     permission_classes = [IsAuthenticated]
@@ -49,7 +49,7 @@ class CrewMemberViewSet(viewsets.ModelViewSet):
     filterset_fields = ["movie", "department"]
 
 
-class CastMemberViewSet(viewsets.ModelViewSet):
+class CastMemberViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CastMember.objects.all()
     serializer_class = CastMemberSerializer
     permission_classes = [IsAuthenticated]
